@@ -780,32 +780,32 @@ while True:
   next_t = distance(p, p_prime)
   if isect:
     next_t = distance(p, isect.position)
-    # Account for the transmittance to next_t
-    if shadow_medium:
-      u = next(rng) # Sample a channel for sampling
-      channel = clamp(int(u * 3), 0, 2)
-      iteration = 0
-      while True:
-        if majorant[channel] <= 0:
+  # Account for the transmittance to next_t
+  if shadow_medium:
+    u = next(rng) # Sample a channel for sampling
+    channel = clamp(int(u * 3), 0, 2)
+    iteration = 0
+    while True:
+      if majorant[channel] <= 0:
+        break
+      if iteration >= max_null_collisions:
+        break
+      t = -log(1 - next(rng)) / majorant[channel]
+      dt = next_t - accum_t
+      accum_t = min(accum_t + t, next_t)
+      if t < dt:
+        # didn't hit the surface, so this is a null-scattering event
+        T_light *= exp(-majorant * t) * sigma_n / max(majorant)
+        p_trans_nee *= exp(-majorant * t) * majorant / max(majorant)
+        real_prob = sigma_t / majorant
+        p_trans_dir *= exp(-majorant * t) * majorant * (1 - real_prob) / max(majorant)
+        if max(T_light) <= 0: # optimization for places where sigma_n = 0
           break
-        if iteration >= max_null_collisions:
-          break
-        t = -log(1 - next(rng)) / majorant[channel]
-        dt = next_t - accum_t
-        accum_t = min(accum_t + t, next_t)
-        if t < dt:
-          # didn't hit the surface, so this is a null-scattering event
-          T_light *= exp(-majorant * t) * sigma_n / max(majorant)
-          p_trans_nee *= exp(-majorant * t) * majorant / max(majorant)
-          real_prob = sigma_t / majorant
-          p_trans_dir *= exp(-majorant * t) * majorant * (1 - real_prob) / max(majorant)
-          if max(T_light) <= 0: # optimization for places where sigma_n = 0
-            break
-        else: # hit the surface
-          T_light *= exp(-majorant * dt);
-          p_trans_nee *= exp(-majorant * dt);
-          p_trans_dir *= exp(-majorant * dt);
-        iteration += 1
+      else: # hit the surface
+        T_light *= exp(-majorant * dt);
+        p_trans_nee *= exp(-majorant * dt);
+        p_trans_dir *= exp(-majorant * dt);
+      iteration += 1
   # same as the previous next event estimation code...
 \end{lstlisting}
 
