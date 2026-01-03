@@ -45,7 +45,7 @@ First you will need to implement displacement mapping in lajolla.
 This can be done in a preprocessing pass to convert meshes with displacement map textures into tesselated mesh, or in an on-the-fly manner~\cite{Thonat:2021:TDM}.
 
 \paragraph{Glints rendering}
-Implement Yan et al.'s normal map filtering technique~\cite{Yan:2014:RGH} or Jakob's discrete stochastic microfacet models~\cite{https://rgl.epfl.ch/publications/Jakob2014Discrete} in lajolla. 
+Implement Yan et al.'s normal map filtering technique~\cite{Yan:2014:RGH} or Jakob's discrete stochastic microfacet models~\cite{Jakob:2014:DSM} in lajolla. As a bonus, implement Wu's mesh-based data structure~\cite{Wu:2025:PME} for faster rendering.
 
 \paragraph{Tesselation-free displacement mapping.}
 Implement an on-the-fly tesselation-free displacement mapping~\cite{Thonat:2021:TDM,Hoetzlein:2025:PDM} in lajolla.
@@ -200,7 +200,7 @@ Can we make the Gaussian process stochastic geometry light transport models~\cit
 Seyb used Gaussian processes~\cite{Seyb:2024:MPM} to model stochastic geometry, but there could be other choices such as Student-t processes or Levy processes. What are the difference in the appearance between these processes and when should we choose these? (This idea was partly suggested by ChatGPT.)
 
 \paragraph{Better/generalized gradient filtering.}
-In our recent work~\cite{Chang:2024:SBG} we show that a simple cross-bilateral filter over the gradients can significantly improve the inverse recovery of textures, volumes, and meshes. Can we design other filters that work better? (For example, how about a non-local means filter? How about guided image filter?) Can we design filters that work for other modalities, such as point clouds, Gaussian splats, SVBRDFs, or even neural networks?
+In our recent work~\cite{Chang:2024:SBG} we show that a simple cross-bilateral filter over the gradients can significantly improve the inverse recovery of textures, volumes, and meshes. Can we design other filters that work better? (For example, how about a non-local means filter? How about guided image filter?) Should a good preconditioning filter be different from a good denoising filter? Can we design filters that work for other modalities, such as point clouds, Gaussian splats, SVBRDFs, or even neural networks?
 
 \paragraph{Guided tri-directional path tracing.}
 From Veach's path-space formulation, it is clear that in addition to tracing rays starting from eyes or lights, it should also be possible to trace rays starting from an arbitrary point in the scene (we explored a similar method in 2017~\cite{Anderson:2017:AED}). 
@@ -218,7 +218,7 @@ Our recent residual path rendering paper~\cite{Xu:2024:RPI} shows that it is pos
 \paragraph{Motion-aware path guiding for animation rendering.}
 Path guiding algorithms build data structures that record contributions of light paths and use them for importance sampling.
 These data structures typically are fitted in a per-frame basis and do not easily extend to animation rendering. 
-In this project, we will explore ways to update the path guiding data structures over time.
+We can explore ways to update the path guiding data structures over time.
 A potential point of reference is the neural radiance caching work from Muller et al.~\cite{Muller:2021:RNR}.
 A relatively simple starting point is to implement a simple exponential weighted moving average update for the 5D tree data structure of Muller et al.~\cite{Muller:2017:PPG}.
 Can you come up with heuristics to account for occlusion and parallax? What kind of information we can extract from a renderer that can help updating the data structure?
@@ -236,7 +236,7 @@ While optimal multiple importance sampling~\cite{Kondapaneni:2019:OMI} is shown 
 Neural networks have been shown to be helpful for importance sampling in a Monte Carlo path tracer~\cite{Muller:2019:NIS}.
 Can we apply them to Metropolis light transport as well?
 Similar methods have been explored in the machine learning community for Hamiltonian Monte Carlo~\cite{Levy:2018:GHM}.
-In this project, we will investigate the use of neural networks for designing mutation in a Metropolis light transport renderer.
+We can investigate the use of neural networks for designing mutation in a Metropolis light transport renderer.
 A relatively simple starting point is to implement Levy et al.'s method in a Kelemen-style path tracer and see how well it works. 
 The topic is also broadly related to diffusion models.
 
@@ -284,7 +284,7 @@ There are mainly two ways to render vector graphics currently. One is more like 
 Laine et al. studied two styles of ray tracing on GPU back in 2013~\cite{Laine:2013:MCH}: megakernel style and wavefront style. They concluded that for complex, production material shaders, wavefront rendering is faster because of better memory locality. However, they didn't have hardware ray tracing back then and the hardware architecture is very different now. Is the conclusion still true today? Study different ways to implement path tracing on GPUs and compare their speed on modern GPU architectures.
 
 \paragraph{Fast ray tracing for Neural Geometry Fields.}
-Our recent work on Neural Geometry Fields~\cite{Edavamadathil:2024:NGF} proposed a data structure for storing geometric displacement using neural networks. However, we only explored rasterization for NGF rendering in the paper. How do we efficiently render a NGF with on-the-fly without tesselation~\cite{Thonat:2021:TDM}? Would the best rendering algorithm be different from the existing ones for displacement mapping?
+Our recent work on Neural Geometry Fields~\cite{Edavamadathil:2024:NGF} proposed a data structure for storing geometric displacement using neural networks. However, we only explored rasterization for NGF rendering in the paper. How do we efficiently ray trace a NGF on-the-fly without tesselation~\cite{Thonat:2021:TDM}? Would the best rendering algorithm be different from the existing ones for displacement mapping?
 
 \paragraph{Multiple-scattering LEAN or LEADR.}
 The normal/displacement map filtering methods LEADN/LEADR~\cite{Olano:2010:LM,Dupuy:2013:LEA} convert normal map filtering to a microfacet NDF fitting problem. However, the microfacet models they are using do not consider multiple scattering between the microfacets. It seems that it would be straightforward to apply the recent advances in multiple-scattering microfacet BSDFs to these methods. Would adding multiple-scattering into LEADN/LEADR improve the visual appearance? Do we need a different multiple-scattering model or microfacet configuration?
